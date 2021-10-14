@@ -1,8 +1,7 @@
 # ---------- TO DO ----------
-# 1. Make sure column names are exactly the same for each .csv processed
-# 2. Filter out URLs, @ mentions, numbers, emojis
-# 3. Use bucket sort to generate index
-# 4. Create a GUI?
+# 1. Filter out URLs, @ mentions, numbers, emojis
+# 2. Use bucket sort to generate index
+# 3. Create a GUI?
 
 import csv
 
