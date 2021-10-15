@@ -1,5 +1,5 @@
 # ---------- TO DO ----------
-# 1. Filter out URLs, @ mentions, numbers, emojis, escape characters, punctuation, Arabic letters
+# 1. Filter out URLs, @ mentions, numbers, emojis, escape characters, punctuation, Arabic letters, Japanese characters
 # 2. Use bucket sort to generate index
 # 3. Create a GUI?
 # 4. Make all words lowercase
@@ -8,7 +8,7 @@ import csv
 
 DEBUG = True
 FILENAME = "trump-tweets.csv"
-CHARS_REMOVE_FROM_WORD = set('.,!?\"^&*()\n_+=[]{};:\'<>~`') # if found in a word, remove from word
+CHARS_REMOVE_FROM_WORD = set('.,!?\"^&*()\n_+=[]{};:\'<>~`“”✔’🔥🏆‘-') # if found in a word, remove from word
 CHARS_REMOVE_WORD_ITSELF = set('@#$%\\/0123456789') # if found in word, throw out that word (check this first)
 # Example: @ mentions, URLs, numbers, prices, percents, hashtags (avoids having to separate words)
 
