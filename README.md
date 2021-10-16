@@ -2,6 +2,7 @@
 Generates an index (like what you'd find in the back of a book) for Donald Trump's tweets. Each tweet is separated into individual words which are sorted alphabetically. Next to each word is a list of tweet IDs corresponding to the tweet where that particular word was used. The output currently looks something like this:
 
 ---------- A ----------
+
 ('augustine', ['790592685144846000'])
 ('aunt', ['335941672926052000'])
 ('aura', ['1011584315040410000'])
@@ -11,6 +12,7 @@ Generates an index (like what you'd find in the back of a book) for Donald Trump
 ...
 
 ---------- B ----------
+
 ('babbling', ['1235795811532960000'])
 ('babe', ['414092990060052000', '344190912622108000', '329719330751250000', '530494414691778000', '530494414691778000', '530485315715469000', '525746349699235000', '491311890644365000', '452081126128250000'])
 ('babies', ['1210740945018180000', '1294233649987140000', '1307030660390020000', '636129007164108000', '634725641972248000', '1100211495223210000'])
