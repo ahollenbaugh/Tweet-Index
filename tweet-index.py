@@ -1,61 +1,90 @@
 # ---------- TO DO ----------
-# 1. Filter out URLs, @ mentions, numbers, emojis, escape characters, punctuation, Arabic letters, Japanese characters
-# 2. Use bucket sort to generate index
-# 3. Create a GUI?
-# 4. Make all words lowercase
+# 1. Change main menu so that user cannot search unless they select [1]
+# 2. Bonus feature: most commonly used words
+# 3. Output to text file
+# 4. GUI
 
+# ---------- LIBRARIES/PACKAGES ----------
 import csv
-from enum import Enum, auto
-import sys
 
+# ---------- FUNCTIONS ----------
+def print_everything(bucket_list):
+    # bucket_list: list of lists of tuples(key: word, value: list of ids)
+    # Print everything:
+    i = 0
+    for bucket in bucket_list: # bucket: list
+        print(f"---------- {ALPHABET[i].upper()} ----------")
+        for item in bucket: # item: tuple
+            print(f"{item[0]}")
+        i = i + 1
 
-class AutoName(Enum):
-    def _generate_next_value_(name, start, count, last_values):
-        start = 0
-        return count
+def index_menu():
+    # Print main menu
+    print("---------- T R U M P  T W E E T  I N D E X ----------")
+    print("[1] SELECT SECTION")
+    print("[2] SEARCH          (MUST SELECT [1] FIRST)")
+    print("[3] SHOW ALL")
+    print("[4] HELP")
+    print("[5] GET TWEET")
+    print("[6] EXIT")
+    print("-----------------------------------------------------")
+    answer = input(">>> ")
+    return answer
 
+def index_help():
+    # Print help menu
+    print("---------- H E L P ------------------------------------------------------------")
+    print("SELECT SECTION   View words starting with the letter A, B, etc.")
+    print("SEARCH           Search for a word in the index and view associated tweets")
+    print("SHOW ALL         Display the entire index")
+    print("HELP             Helps you")
+    print("GET TWEET        Find tweet given an id")
+    print("EXIT             End program")
+    print("-------------------------------------------------------------------------------")
+    print("[1] OK")
+    input(">>> ")
 
-class Bucket(AutoName):
-    BUCKET_A = auto()
-    BUCKET_B = auto()
-    BUCKET_C = auto()
-    BUCKET_D = auto()
-    BUCKET_E = auto()
-    BUCKET_F = auto()
-    BUCKET_G = auto()
-    BUCKET_H = auto()
-    BUCKET_I = auto()
-    BUCKET_J = auto()
-    BUCKET_K = auto()
-    BUCKET_L = auto()
-    BUCKET_M = auto()
-    BUCKET_N = auto()
-    BUCKET_O = auto()
-    BUCKET_P = auto()
-    BUCKET_Q = auto()
-    BUCKET_R = auto()
-    BUCKET_S = auto()
-    BUCKET_T = auto()
-    BUCKET_U = auto()
-    BUCKET_V = auto()
-    BUCKET_W = auto()
-    BUCKET_X = auto()
-    BUCKET_Y = auto()
-    BUCKET_Z = auto()
+def get_section(letter, index):
+    # Returns all the words beginning with letter
+    i = ord(letter.lower()) - ord('a')
+    if DEBUG: print(i)
+    return index[i]
 
+def print_section(section):
+    # Print all the words in this section (they all start with the same letter)
+    for tuple in section:
+        print(f"{tuple[0]}, {tuple[1]}")
 
-DEBUG = True
+def search(word, section):
+    # Search for word in section (it will only search section, not the whole index!)
+    for tuple in section:
+        if tuple[0] == word:
+            return tuple[1]
+    return ()
+
+def print_tweets(id_list, id_dict, word):
+    # Print all tweets containing a particular word
+    line_num = 0
+    for id in id_list:
+        print(id)
+        print(id_dict[id])
+        print("-----------------------------------")
+        line_num = line_num + 1
+    print(f"Number of tweets containing \"{word}\": {line_num}")
+
+# ---------- CONSTANTS ----------
+DEBUG = False
 FILENAME = "trump-tweets.csv"
-CHARS_REMOVE_FROM_WORD = set('.,!?\"^&*()\n_+=[]{};:\'<>~`“”✔’🔥🏆‘-') # if found in a word, remove from word
-CHARS_REMOVE_WORD_ITSELF = set('@#$%\\/0123456789') # if found in word, throw out that word (check this first)
 ALLOWED_CHARACTERS = set('ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz')
-# Example: @ mentions, URLs, numbers, prices, percents, hashtags (avoids having to separate words)
-SIZE = 26
+SIZE = 26 # number of buckets
 ALPHABET = ('a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z')
+
 
 # 1. Create dictionary to store words and their ID:
 word_dict = dict()
 word_dict_size = 0
+
+tweet_dict = dict() # contains tweet id as key and text as value
 
 print("Working...")
 
@@ -68,6 +97,8 @@ with open(FILENAME, mode='r', encoding="utf8") as csv_file:
             # This is the column name row, don't do anything here
             line_count += 1
         else:
+            # Insert tweet id and associated text into tweet_dict:
+            tweet_dict[row["id"]] = row["text"]
             # 3. Separate words of each tweet:
             tweet_text = row["text"] # grab tweet text
             tweet_id = row["id"] # grab tweet id
@@ -93,107 +124,64 @@ alphabet_tuple_list = []
 
 count = 0
 while count < SIZE:
-    alphabet_tuple_list.append(list())
+    alphabet_tuple_list.append(list()) # Create all the buckets A - Z
     count = count + 1
 
+# Words starting with "a" go into the "a" bucket, etc.
 for key in word_dict.keys():
-    if key[0] == 'a':
-        alphabet_tuple_list[0].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'b':
-        alphabet_tuple_list[1].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'c':
-        alphabet_tuple_list[2].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'd':
-        alphabet_tuple_list[3].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'e':
-        alphabet_tuple_list[4].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'f':
-        alphabet_tuple_list[5].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'g':
-        alphabet_tuple_list[6].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'h':
-        alphabet_tuple_list[7].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'i':
-        alphabet_tuple_list[8].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'j':
-        alphabet_tuple_list[9].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'k':
-        alphabet_tuple_list[10].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'l':
-        alphabet_tuple_list[11].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'm':
-        alphabet_tuple_list[12].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'n':
-        alphabet_tuple_list[13].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'o':
-        alphabet_tuple_list[14].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'p':
-        alphabet_tuple_list[15].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'q':
-        alphabet_tuple_list[16].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'r':
-        alphabet_tuple_list[17].append((key,word_dict[key]))
-        continue
-    elif key[0] == 's':
-        alphabet_tuple_list[18].append((key,word_dict[key]))
-        continue
-    elif key[0] == 't':
-        alphabet_tuple_list[19].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'u':
-        alphabet_tuple_list[20].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'v':
-        alphabet_tuple_list[21].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'w':
-        alphabet_tuple_list[22].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'x':
-        alphabet_tuple_list[23].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'y':
-        alphabet_tuple_list[24].append((key,word_dict[key]))
-        continue
-    elif key[0] == 'z':
-        alphabet_tuple_list[25].append((key,word_dict[key]))
-        continue
+    i = ord(key[0]) - ord('a')
+    alphabet_tuple_list[i].append((key,word_dict[key]))
 
+# Sort within each bucket:
 alphabet_index = 0
-for list in alphabet_tuple_list:
-    list.sort()
-    # print(f"----------{ALPHABET[alphabet_index]} List----------\n")
-    # for item in list:
-    #     print(item, "\n")
+for bucket in alphabet_tuple_list:
+    bucket.sort()
     alphabet_index = alphabet_index + 1
 
-if DEBUG:
-    # for key, value in word_dict.items():
-    #     print(key, ": ", value)
-    # word_dict_sorted = sorted(word_dict.items())
-    # for item in word_dict_sorted:
-    #     print(item, "\n")
-    # print(f"----------{ALPHABET[0]} List----------\n")
-    # for multipair in alphabet_tuple_list[0]:
-    #     print(multipair)
-    print(f"Number of words: {word_dict_size}")
+# Main program:
+while True:
+    option = int(index_menu())
+    if option == 1:
+        while True:
+            print("Enter a letter between A and Z")
+            print("[1] BACK")
+            letter = input(">>> ")
+            if letter == "1": break
+            if letter not in ALLOWED_CHARACTERS:
+                print("Not a letter")
+            else: break
+        if not letter == "1":
+            section = get_section(letter, alphabet_tuple_list)
+            print_section(section)
+    elif option == 2:
+        while True:
+            print("Enter a word to see tweets")
+            print("[1] BACK")
+            word = input(">>> ")
+            if "1" in word:
+                break
+            tweet_id_list = search(word, section)
+            if not tweet_id_list:
+                print(f"{word} not found.")
+            else: break
+        if "1" not in word:
+            print_tweets(tweet_id_list, tweet_dict, word)
+    elif option == 3:
+        print_everything(alphabet_tuple_list)
+    elif option == 4:
+        index_help()
+    elif option == 5:
+        print("Enter tweet id")
+        print("[1] BACK")
+        while True:
+            tweet_id = input(">>> ")
+            if tweet_id == "1": break
+            if tweet_id not in tweet_dict:
+                print("id not found")
+            else:
+                print(f"{tweet_id}: {tweet_dict[tweet_id]}")
+                break
+    elif option == 6:
+        break
 
-
-
+    if DEBUG: print(option)
